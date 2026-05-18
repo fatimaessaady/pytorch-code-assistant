@@ -28,7 +28,7 @@ OUTPUT_DIR = "/content/drive/MyDrive/pytorch-code-assistant/checkpoints"
 MERGED_DIR = "/content/drive/MyDrive/pytorch-code-assistant/merged"
 
 # ── Config ─────────────────────────────────────────────────────────────────
-MODEL_NAME    = "bigcode/starcoder2-7b"
+MODEL_NAME = "bigcode/starcoder2-3b"
 LORA_R        = 16
 LORA_ALPHA    = 32
 LORA_DROPOUT  = 0.05
