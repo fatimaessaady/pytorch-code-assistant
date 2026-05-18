@@ -32,7 +32,7 @@ MODEL_NAME = "bigcode/starcoder2-3b"
 LORA_R        = 16
 LORA_ALPHA    = 32
 LORA_DROPOUT  = 0.05
-MAX_SEQ_LEN   = 1024
+MAX_SEQ_LEN   = 512
 BATCH_SIZE    = 2
 GRAD_ACCUM    = 8        # effective batch = 16
 EPOCHS        = 3
@@ -65,7 +65,7 @@ def load_model():
     print("Loading model in float16 (no quantization)...")
     model = AutoModelForCausalLM.from_pretrained(
         MODEL_NAME,
-        torch_dtype=torch.float16,
+        torch_dtype=torch.bfloat16,
         trust_remote_code=True,
         use_cache=False,
     )
