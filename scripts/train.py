@@ -15,7 +15,7 @@ from transformers import (
     TrainingArguments,
     set_seed,
 )
-from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
+from peft import LoraConfig, get_peft_model
 from trl import SFTTrainer, DataCollatorForCompletionOnlyLM
 
 # ── Reproducibility ────────────────────────────────────────────────────────
@@ -29,8 +29,8 @@ MERGED_DIR = "/content/drive/MyDrive/pytorch-code-assistant/merged"
 
 # ── Config ─────────────────────────────────────────────────────────────────
 MODEL_NAME    = "bigcode/starcoder2-7b"
-LORA_R        = 64
-LORA_ALPHA    = 128
+LORA_R        = 16
+LORA_ALPHA    = 32
 LORA_DROPOUT  = 0.05
 MAX_SEQ_LEN   = 1024
 BATCH_SIZE    = 2
@@ -90,9 +90,7 @@ def attach_lora(model):
         bias="none",
         task_type="CAUSAL_LM",
     )
-    model = prepare_model_for_kbit_training(
-    model, use_gradient_checkpointing=True
-)
+    
     trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)
     total     = sum(p.numel() for p in model.parameters())
     print(f"Trainable params: {trainable:,} / {total:,} ({100*trainable/total:.2f}%)")
@@ -107,6 +105,8 @@ def train():
     print(f"GPU: {torch.cuda.get_device_name(0)}")
     print(f"VRAM: {torch.cuda.get_device_properties(0).total_memory / 1e9:.1f} GB")
 
+    os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
+    
     train_ds, val_ds = load_data()
     model, tokenizer = load_model()
     model.gradient_checkpointing_enable()
