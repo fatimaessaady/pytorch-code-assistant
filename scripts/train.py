@@ -66,10 +66,10 @@ def load_model():
     model = AutoModelForCausalLM.from_pretrained(
         MODEL_NAME,
         torch_dtype=torch.float16,
-        device_map="auto",
         trust_remote_code=True,
         use_cache=False,
     )
+    model = model.to("cuda")
     tokenizer = AutoTokenizer.from_pretrained(
         MODEL_NAME, trust_remote_code=True, padding_side="right"
     )
