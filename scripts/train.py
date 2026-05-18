@@ -12,7 +12,6 @@ from datasets import load_dataset
 from transformers import (
     AutoTokenizer,
     AutoModelForCausalLM,
-    BitsAndBytesConfig,
     TrainingArguments,
     set_seed,
 )
@@ -63,21 +62,13 @@ def load_data():
 
 # ── Load model ─────────────────────────────────────────────────────────────
 def load_model():
-    bnb_config = BitsAndBytesConfig(
-        load_in_4bit=True,
-        bnb_4bit_quant_type="nf4",
-        bnb_4bit_compute_dtype=torch.bfloat16,
-        bnb_4bit_use_double_quant=True,
-    )
+    print("Loading model in float16 (no quantization)...")
     model = AutoModelForCausalLM.from_pretrained(
         MODEL_NAME,
-        quantization_config=bnb_config,
+        torch_dtype=torch.float16,
         device_map="auto",
         trust_remote_code=True,
         use_cache=False,
-    )
-    model = prepare_model_for_kbit_training(
-        model, use_gradient_checkpointing=True
     )
     tokenizer = AutoTokenizer.from_pretrained(
         MODEL_NAME, trust_remote_code=True, padding_side="right"
@@ -99,7 +90,9 @@ def attach_lora(model):
         bias="none",
         task_type="CAUSAL_LM",
     )
-    model = get_peft_model(model, config)
+    model = prepare_model_for_kbit_training(
+    model, use_gradient_checkpointing=True
+)
     trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)
     total     = sum(p.numel() for p in model.parameters())
     print(f"Trainable params: {trainable:,} / {total:,} ({100*trainable/total:.2f}%)")
@@ -116,6 +109,7 @@ def train():
 
     train_ds, val_ds = load_data()
     model, tokenizer = load_model()
+    model.gradient_checkpointing_enable()
     model = attach_lora(model)
 
     # Loss only on response tokens
@@ -136,7 +130,8 @@ def train():
         warmup_ratio=0.03,
         lr_scheduler_type="cosine",
         optim="paged_adamw_8bit",
-        bf16=True,
+        fp16=True,
+        bf16=False,
         max_grad_norm=0.3,
         logging_steps=10,
         eval_strategy="steps",
