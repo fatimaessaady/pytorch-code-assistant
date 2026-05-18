@@ -134,7 +134,7 @@ def train():
         bf16=False,
         max_grad_norm=0.3,
         logging_steps=10,
-        eval_strategy="steps",
+        evaluation_strategy="steps",
         eval_steps=50,
         save_strategy="steps",
         save_steps=50,
