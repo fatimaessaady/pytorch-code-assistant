@@ -90,7 +90,7 @@ def attach_lora(model):
         bias="none",
         task_type="CAUSAL_LM",
     )
-    
+    model = get_peft_model(model, config)
     trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)
     total     = sum(p.numel() for p in model.parameters())
     print(f"Trainable params: {trainable:,} / {total:,} ({100*trainable/total:.2f}%)")
@@ -129,7 +129,7 @@ def train():
         weight_decay=0.01,
         warmup_ratio=0.03,
         lr_scheduler_type="cosine",
-        optim="paged_adamw_8bit",
+        optim="adamw_torch",
         fp16=True,
         bf16=False,
         max_grad_norm=0.3,
