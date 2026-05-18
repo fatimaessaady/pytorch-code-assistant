@@ -1,0 +1,29 @@
+# Virtual environment
+venv/
+
+# Model weights (too large for GitHub)
+models/checkpoints/
+models/merged/
+
+# Data (we'll store on Drive/HuggingFace instead)
+data/raw/
+data/processed/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# Environment variables
+.env
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Wandb logs
+wandb/

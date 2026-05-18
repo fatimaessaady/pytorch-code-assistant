@@ -1,0 +1,25 @@
+# Core training
+torch==2.6.0
+transformers==4.40.0
+datasets==2.19.0
+accelerate==0.29.3
+peft==0.10.0
+trl==0.8.6
+
+# Quantization
+bitsandbytes==0.43.1
+
+# Experiment tracking
+wandb==0.16.6
+
+# Utilities
+huggingface_hub==0.22.2
+sentencepiece==0.2.0
+scipy==1.13.0
+numpy==1.26.4
+pandas==2.2.2
+tqdm==4.66.2
+
+# Evaluation
+evaluate==0.4.1
+nltk==3.8.1
